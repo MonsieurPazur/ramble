@@ -1,0 +1,18 @@
+{
+  "name": "Ramble",
+  "version": "1.0.0",
+  "description": "A simple tool for creating dialogs, cutscenes and stories",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Michał Skwarek",
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "electron": "^5.0.2"
+  },
+  "dependencies": {
+    "nedb": "^1.8.0"
+  }
+}
