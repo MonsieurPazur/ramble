@@ -1,4 +1,4 @@
-onst Datastore = require('nedb')
+const Datastore = require('nedb')
 
 class Ramble {
     constructor() {
