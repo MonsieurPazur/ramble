@@ -13,6 +13,9 @@
     "electron": "^5.0.2"
   },
   "dependencies": {
-    "nedb": "^1.8.0"
+    "cytoscape": "^3.7.1",
+    "nedb": "^1.8.0",
+    "normalize.css": "^8.0.1",
+    "npm": "^6.9.0"
   }
 }
