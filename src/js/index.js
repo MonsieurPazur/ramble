@@ -49,23 +49,61 @@ const ehOptions = {
 }
 let eh = cy.edgehandles(ehOptions)
 
+function removeEdge(edge) {
+	let data = edge.source().data()
+	data.target = null
+	ramble.dialogs.update(edge.source().id(), data, function(result) {
+		cy.remove(edge)
+	})
+}
+
 // Initialize cxtmenu.
-const menuOptions = {
+const menuEdgeOptions = {
 	selector: 'edge',
 	commands: [
 		{
 			content: 'Remove',
-			select: function(edge) {
-				let data = edge.source().data()
-				data.target = null
-				ramble.dialogs.update(edge.source().id(), data, function(result) {
-					cy.remove(edge)
+			select: removeEdge
+		}
+	]
+}
+const menuNodeOptions = {
+	selector: 'node',
+	commands: [
+		{
+			content: 'Remove',
+			select: function(node) {
+				let promise = new Promise((resolve, reject) => {
+					ramble.dialogs.remove(node.id(), function(result) {
+						resolve()
+					})
+				})
+				node.connectedEdges().forEach(function(edge) {
+					promise.then(function(result) {
+						removeEdge(edge)
+						return result
+					})
+				})
+				promise.then(function(result) {
+					cy.remove(node)
+					return result
+				})
+			}
+		},
+		{
+			content: 'Edit',
+			select: function(node) {
+				let data = node.data()
+				data.name = 'Some new name'
+				ramble.dialogs.update(node.id(), data, function(result) {
+					node.data(data)
 				})
 			}
 		}
 	]
 }
-let menu = cy.cxtmenu(menuOptions)
+let menu = cy.cxtmenu(menuEdgeOptions)
+menu = cy.cxtmenu(menuNodeOptions)
 
 ramble.dialogs.list(function(result) {
 	result.forEach(function(dialog) {
