@@ -64,6 +64,16 @@ const menuEdgeOptions = {
 		{
 			content: 'Remove',
 			select: removeEdge
+		},
+		{
+			content: '',
+			select: null,
+			enabled: false
+		},
+		{
+			content: '',
+			select: null,
+			enabled: false
 		}
 	]
 }
@@ -99,11 +109,49 @@ const menuNodeOptions = {
 					node.data(data)
 				})
 			}
+		},
+		{
+			content: '',
+			select: null,
+			enabled: false
+		}
+	]
+}
+const menuCoreOptions = {
+	selector: 'core',
+	commands: [
+		{
+			content: 'New',
+			select: function() {
+				let data = {
+					name: '666'
+				}
+				ramble.dialogs.add(data, function(created) {
+					created.id = created._id
+					ramble.dialogs.update(created._id, created, function(updated) {
+						cy.add({
+							group: 'nodes',
+							data: updated
+						})
+					})
+				})
+			}
+		},
+		{
+			content: '',
+			select: null,
+			enabled: false
+		},
+		{
+			content: '',
+			select: null,
+			enabled: false
 		}
 	]
 }
 let menu = cy.cxtmenu(menuEdgeOptions)
 menu = cy.cxtmenu(menuNodeOptions)
+menu = cy.cxtmenu(menuCoreOptions)
 
 ramble.dialogs.list(function(result) {
 	result.forEach(function(dialog) {
