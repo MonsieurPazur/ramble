@@ -25,22 +25,21 @@ const cytoscape = require('cytoscape')
 
 // Register extensions.
 const edgehandles = require('cytoscape-edgehandles')
+const cxtmenu = require('cytoscape-cxtmenu')
 cytoscape.use(edgehandles)
+cytoscape.use(cxtmenu)
 
 // Initialize cytoscape.
 let cy = cytoscape({
 	container: $('#graph-container'),
 	elements: [],
 	style: style,
-	layout: {
-		name: 'circle'
-	},
 	minZoom: 0.5,
 	maxZoom: 2.0,
 })
 
 // Initialize edgehandles.
-const options = {
+const ehOptions = {
 	// Saving newly created edges
 	complete: function(sourceNode, targetNode, addedEles) {
 		let data = sourceNode.data()
@@ -48,7 +47,25 @@ const options = {
 		ramble.dialogs.update(sourceNode.id(), data, function(result) {})
 	}
 }
-let eh = cy.edgehandles(options)
+let eh = cy.edgehandles(ehOptions)
+
+// Initialize cxtmenu.
+const menuOptions = {
+	selector: 'edge',
+	commands: [
+		{
+			content: 'Remove',
+			select: function(edge) {
+				let data = edge.source().data()
+				data.target = null
+				ramble.dialogs.update(edge.source().id(), data, function(result) {
+					cy.remove(edge)
+				})
+			}
+		}
+	]
+}
+let menu = cy.cxtmenu(menuOptions)
 
 ramble.dialogs.list(function(result) {
 	result.forEach(function(dialog) {
@@ -73,4 +90,10 @@ ramble.dialogs.list(function(result) {
 			})
 		}
 	})
+
+	// Redrawing layout after adding nodes and edges.
+ 	cy.layout({
+		name: 'circle'
+	}).run()
 })
+
