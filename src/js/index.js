@@ -4,6 +4,8 @@ const cxtmenu = require('cytoscape-cxtmenu');
 const edgehandles = require('cytoscape-edgehandles');
 const Ramble = require('./ramble.js');
 
+const { style } = require('./styles.js');
+
 const ramble = new Ramble();
 
 // Initialize dialog.
@@ -23,26 +25,6 @@ $('#graph-container').mousedown((e) => {
   }
 });
 
-const style = [
-  {
-    selector: 'node',
-    style: {
-      'background-color': '#666',
-      label: 'data(name)',
-    },
-  },
-  {
-    selector: 'edge',
-    style: {
-      width: 3,
-      'line-color': '#ccc',
-      'target-arrow-color': '#ccc',
-      'target-arrow-shape': 'triangle-backcurve',
-      'curve-style': 'unbundled-bezier',
-    },
-  },
-];
-
 // Register extensions.
 cytoscape.use(edgehandles);
 cytoscape.use(cxtmenu);
@@ -58,6 +40,8 @@ const cy = cytoscape({
 
 // Initialize edgehandles.
 const ehOptions = {
+  hoverDelay: 50,
+  snap: true,
   // Saving newly created edges
   complete(sourceNode, targetNode) {
     const data = sourceNode.data();
@@ -187,14 +171,25 @@ cy.cxtmenu(menuEdgeOptions);
 cy.cxtmenu(menuNodeOptions);
 cy.cxtmenu(menuCoreOptions);
 
+cy.on('mouseover', 'node', (e) => {
+  const node = e.target;
+  node.removeClass('default').addClass('hover');
+});
+
+cy.on('mouseout', 'node', (e) => {
+  const node = e.target;
+  node.removeClass('hover').addClass('default');
+});
+
 ramble.dialogs.list((result) => {
   result.forEach((dialog) => {
     const data = dialog;
     data.id = dialog._id;
-    cy.add({
+    const node = cy.add({
       group: 'nodes',
       data,
     });
+    node.addClass('default');
   });
   result.forEach((dialog) => {
     // If has specified target, create edge.
