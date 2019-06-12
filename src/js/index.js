@@ -1,185 +1,217 @@
 // Main file that handles all the necessary logic.
-const Ramble = require('./ramble.js')
-let ramble = new Ramble()
+const cytoscape = require('cytoscape');
+const cxtmenu = require('cytoscape-cxtmenu');
+const edgehandles = require('cytoscape-edgehandles');
+const Ramble = require('./ramble.js');
+
+const ramble = new Ramble();
+
+// Initialize dialog.
+const dialogBox = $('#dialog');
+$(() => {
+  dialogBox.dialog({
+    autoOpen: false,
+  });
+});
+
+let mouseX = 0;
+let mouseY = 0;
+$('#graph-container').mousedown((e) => {
+  if (e.button === 2) {
+    mouseX = e.pageX;
+    mouseY = e.pageY;
+  }
+});
 
 const style = [
-	{
-		selector: 'node',
-		style: {
-			'background-color': '#666',
-			'label': 'data(name)'
-		}
-	},
-	{
-		selector: 'edge',
-		style: {
-			'width': 3,
-			'line-color': '#ccc',
-			'target-arrow-color': '#ccc',
-			'target-arrow-shape': 'triangle-backcurve',
-			'curve-style': 'unbundled-bezier'
-		}
-	}
-]
-const cytoscape = require('cytoscape')
+  {
+    selector: 'node',
+    style: {
+      'background-color': '#666',
+      label: 'data(name)',
+    },
+  },
+  {
+    selector: 'edge',
+    style: {
+      width: 3,
+      'line-color': '#ccc',
+      'target-arrow-color': '#ccc',
+      'target-arrow-shape': 'triangle-backcurve',
+      'curve-style': 'unbundled-bezier',
+    },
+  },
+];
 
 // Register extensions.
-const edgehandles = require('cytoscape-edgehandles')
-const cxtmenu = require('cytoscape-cxtmenu')
-cytoscape.use(edgehandles)
-cytoscape.use(cxtmenu)
+cytoscape.use(edgehandles);
+cytoscape.use(cxtmenu);
 
 // Initialize cytoscape.
-let cy = cytoscape({
-	container: $('#graph-container'),
-	elements: [],
-	style: style,
-	minZoom: 0.5,
-	maxZoom: 2.0,
-})
+const cy = cytoscape({
+  container: $('#graph-container'),
+  elements: [],
+  style,
+  minZoom: 0.5,
+  maxZoom: 2.0,
+});
 
 // Initialize edgehandles.
 const ehOptions = {
-	// Saving newly created edges
-	complete: function(sourceNode, targetNode, addedEles) {
-		let data = sourceNode.data()
-		data.target = targetNode.id()
-		ramble.dialogs.update(sourceNode.id(), data, function(result) {})
-	}
-}
-let eh = cy.edgehandles(ehOptions)
+  // Saving newly created edges
+  complete(sourceNode, targetNode) {
+    const data = sourceNode.data();
+    data.target = targetNode.id();
+    ramble.dialogs.update(sourceNode.id(), data, () => {});
+  },
+};
+cy.edgehandles(ehOptions);
 
 function removeEdge(edge) {
-	let data = edge.source().data()
-	data.target = null
-	ramble.dialogs.update(edge.source().id(), data, function(result) {
-		cy.remove(edge)
-	})
+  const data = edge.source().data();
+  data.target = null;
+  ramble.dialogs.update(edge.source().id(), data, () => {
+    cy.remove(edge);
+  });
 }
+
+$('#add-form').submit((e) => {
+  e.preventDefault();
+  const form = $(e.currentTarget);
+
+  const data = form.serializeArray().reduce((obj, item) => {
+    obj[item.name] = item.value;
+    return obj;
+  }, {});
+
+  ramble.dialogs.add(data, (created) => {
+    created.id = created._id;
+    ramble.dialogs.update(created._id, created, (updated) => {
+      cy.add({
+        group: 'nodes',
+        data: updated,
+        position: {
+          x: mouseX,
+          y: mouseY,
+        },
+      });
+    });
+  });
+
+  dialogBox.dialog('close');
+  form.trigger('reset');
+});
 
 // Initialize cxtmenu.
 const menuEdgeOptions = {
-	selector: 'edge',
-	commands: [
-		{
-			content: 'Remove',
-			select: removeEdge
-		},
-		{
-			content: '',
-			select: null,
-			enabled: false
-		},
-		{
-			content: '',
-			select: null,
-			enabled: false
-		}
-	]
-}
+  selector: 'edge',
+  commands: [
+    {
+      content: 'Remove',
+      select: removeEdge,
+    },
+    {
+      content: '',
+      select: null,
+      enabled: false,
+    },
+    {
+      content: '',
+      select: null,
+      enabled: false,
+    },
+  ],
+};
 const menuNodeOptions = {
-	selector: 'node',
-	commands: [
-		{
-			content: 'Remove',
-			select: function(node) {
-				let promise = new Promise((resolve, reject) => {
-					ramble.dialogs.remove(node.id(), function(result) {
-						resolve()
-					})
-				})
-				node.connectedEdges().forEach(function(edge) {
-					promise.then(function(result) {
-						removeEdge(edge)
-						return result
-					})
-				})
-				promise.then(function(result) {
-					cy.remove(node)
-					return result
-				})
-			}
-		},
-		{
-			content: 'Edit',
-			select: function(node) {
-				let data = node.data()
-				data.name = 'Some new name'
-				ramble.dialogs.update(node.id(), data, function(result) {
-					node.data(data)
-				})
-			}
-		},
-		{
-			content: '',
-			select: null,
-			enabled: false
-		}
-	]
-}
+  selector: 'node',
+  commands: [
+    {
+      content: 'Remove',
+      select(node) {
+        const promise = new Promise((resolve) => {
+          ramble.dialogs.remove(node.id(), () => {
+            resolve();
+          });
+        });
+        node.connectedEdges().forEach((edge) => {
+          promise.then((result) => {
+            removeEdge(edge);
+            return result;
+          });
+        });
+        promise.then((result) => {
+          cy.remove(node);
+          return result;
+        });
+      },
+    },
+    {
+      content: 'Edit',
+      select(node) {
+        const data = node.data();
+        data.name = 'Some new name';
+        ramble.dialogs.update(node.id(), data, () => {
+          node.data(data);
+        });
+      },
+    },
+    {
+      content: '',
+      select: null,
+      enabled: false,
+    },
+  ],
+};
 const menuCoreOptions = {
-	selector: 'core',
-	commands: [
-		{
-			content: 'New',
-			select: function() {
-				let data = {
-					name: '666'
-				}
-				ramble.dialogs.add(data, function(created) {
-					created.id = created._id
-					ramble.dialogs.update(created._id, created, function(updated) {
-						cy.add({
-							group: 'nodes',
-							data: updated
-						})
-					})
-				})
-			}
-		},
-		{
-			content: '',
-			select: null,
-			enabled: false
-		},
-		{
-			content: '',
-			select: null,
-			enabled: false
-		}
-	]
-}
-let menu = cy.cxtmenu(menuEdgeOptions)
-menu = cy.cxtmenu(menuNodeOptions)
-menu = cy.cxtmenu(menuCoreOptions)
+  selector: 'core',
+  commands: [
+    {
+      content: 'New',
+      select() {
+        dialogBox.dialog('open');
+      },
+    },
+    {
+      content: '',
+      select: null,
+      enabled: false,
+    },
+    {
+      content: '',
+      select: null,
+      enabled: false,
+    },
+  ],
+};
+cy.cxtmenu(menuEdgeOptions);
+cy.cxtmenu(menuNodeOptions);
+cy.cxtmenu(menuCoreOptions);
 
-ramble.dialogs.list(function(result) {
-	result.forEach(function(dialog) {
-		let data = dialog
-		data.id = dialog._id
-		cy.add({
-			group: 'nodes',
-			data: data
-		})
-	})
-	result.forEach(function(dialog) {
+ramble.dialogs.list((result) => {
+  result.forEach((dialog) => {
+    const data = dialog;
+    data.id = dialog._id;
+    cy.add({
+      group: 'nodes',
+      data,
+    });
+  });
+  result.forEach((dialog) => {
+    // If has specified target, create edge.
+    if (dialog.target) {
+      cy.add({
+        group: 'edges',
+        data: {
+          id: (`${dialog.id}_${dialog.target}`),
+          source: dialog.id,
+          target: dialog.target,
+        },
+      });
+    }
+  });
 
-		// If has specified target, create edge.
-		if (dialog.target) {
-			cy.add({
-				group: 'edges',
-				data: {
-					id: (dialog.id + '_' + dialog.target),
-					source: dialog.id,
-					target: dialog.target
-				}
-			})
-		}
-	})
-
-	// Redrawing layout after adding nodes and edges.
- 	cy.layout({
-		name: 'circle'
-	}).run()
-})
-
+  // Redrawing layout after adding nodes and edges.
+  cy.layout({
+    name: 'circle',
+  }).run();
+});
