@@ -190,6 +190,10 @@ ramble.dialogs.list((result) => {
       data,
     });
     node.addClass('default');
+    if (node.data('character')) {
+      node.data('color', node.data('character').color);
+      node.addClass('colored');
+    }
   });
   result.forEach((dialog) => {
     // If has specified target, create edge.

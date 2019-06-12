@@ -7,6 +7,10 @@ class Ramble {
 			filename: 'data/dialogs.db',
 			autoload: true
 		});
+		this.db.characters = new Datastore({
+			filename: 'data/characters.db',
+			autoload: true
+		});
 	}
 
 	dialogs = {
@@ -34,6 +38,19 @@ class Ramble {
 				_id: id
 			}, {}, function(err, numRemoved) {
 				return callback(numRemoved);
+			});
+		}
+	}
+
+	characters = {
+		list: (callback) => {
+			this.db.characters.find({}, function(err, docs) {
+				return callback(docs);
+			});
+		},
+		get: (name, callback) => {
+			this.db.characters.find({name: name}, function(err, docs) {
+				return callback(docs[0]);
 			});
 		}
 	}

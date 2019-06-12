@@ -2,7 +2,6 @@ const style = [
   {
     selector: 'node',
     style: {
-      'background-color': '#666',
       width: 80,
       height: 40,
       shape: 'round-rectangle',
@@ -28,6 +27,12 @@ const style = [
       'text-max-width': 200,
       'text-margin-x': 5,
       'font-style': 'italic',
+    },
+  },
+  {
+    selector: 'node.colored',
+    style: {
+      'background-color': 'data(color)',
     },
   },
   {
