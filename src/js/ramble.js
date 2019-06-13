@@ -14,9 +14,12 @@ class Ramble {
 	}
 
 	dialogs = {
-		list: (callback) => {
-			this.db.dialogs.find({}, function(err, docs) {
-				return callback(docs);
+		list: () => {
+			const db = this.db.dialogs;
+			return new Promise(function (resolve) {
+				db.find({}, function(err, docs) {
+					resolve(docs);
+				});
 			});
 		},
 		add: (doc) => {
@@ -27,20 +30,23 @@ class Ramble {
 				});
 			});
 		},
-		update: (id, data, callback) => {
-			this.db.dialogs.update({
-				_id: id
-			}, data, {
+		update: (id, data) => {
+			const db = this.db.dialogs;
+			const options = {
 				returnUpdatedDocs: true
-			}, function(err, numAffected, affectedDocuments) {
-				return callback(affectedDocuments);
+			};
+			return new Promise(function(resolve) {
+				db.update({_id: id}, data, options, function(err, numAffected, affectedDocuments) {
+					resolve(affectedDocuments);
+				})
 			});
 		},
-		remove: (id, callback) => {
-			this.db.dialogs.remove({
-				_id: id
-			}, {}, function(err, numRemoved) {
-				return callback(numRemoved);
+		remove: (id) => {
+			const db = this.db.dialogs;
+			return new Promise(function(resolve) {
+				db.remove({_id: id}, {}, function(err, numRemoved) {
+					resolve(numRemoved);
+				})
 			});
 		}
 	}

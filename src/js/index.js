@@ -18,7 +18,7 @@ $(() => {
 });
 
 function generateCharacterList() {
-  ramble.characters.list((results) => {
+  ramble.characters.list().then((results) => {
     $.each(results, (i, character) => {
       $('#characters').append($('<option>').text(character.name));
     });
@@ -55,18 +55,10 @@ const ehOptions = {
   complete(sourceNode, targetNode) {
     const data = sourceNode.data();
     data.target = targetNode.id();
-    ramble.dialogs.update(sourceNode.id(), data, () => {});
+    ramble.dialogs.update(sourceNode.id(), data);
   },
 };
 cy.edgehandles(ehOptions);
-
-function removeEdge(edge) {
-  const data = edge.source().data();
-  data.target = null;
-  ramble.dialogs.update(edge.source().id(), data, () => {
-    cy.remove(edge);
-  });
-}
 
 const generateCharacter = name => new Promise(((resolve) => {
   ramble.characters.list().then((characters) => {
@@ -104,7 +96,7 @@ const saveDialog = (dialog, character) => new Promise(((resolve) => {
 }));
 
 const updateDialog = dialog => new Promise(((resolve) => {
-  ramble.dialogs.update(dialog._id, dialog, (updatedDialog) => {
+  ramble.dialogs.update(dialog._id, dialog).then((updatedDialog) => {
     const node = cy.add({
       group: 'nodes',
       data: updatedDialog,
@@ -123,13 +115,11 @@ const updateDialog = dialog => new Promise(((resolve) => {
   });
 }));
 
-function getDataFromForm(form) {
-  return form.serializeArray().reduce((obj, item) => {
-    const result = obj;
-    result[item.name] = item.value;
-    return result;
-  }, {});
-}
+const getDataFromForm = form => form.serializeArray().reduce((obj, item) => {
+  const result = obj;
+  result[item.name] = item.value;
+  return result;
+}, {});
 
 $('#add-form').submit((e) => {
   e.preventDefault();
@@ -149,6 +139,21 @@ $('#add-form').submit((e) => {
       form.trigger('reset');
     });
 });
+
+const removeNode = node => new Promise(((resolve) => {
+  ramble.dialogs.remove(node.id).then(() => {
+    resolve(node);
+  });
+}));
+
+const removeEdge = edge => new Promise(((resolve) => {
+  const data = edge.source().data();
+  data.target = null;
+  ramble.dialogs.update(edge.source().id(), data).then(() => {
+    cy.remove(edge);
+    resolve();
+  });
+}));
 
 // Initialize cxtmenu.
 const menuEdgeOptions = {
@@ -170,6 +175,7 @@ const menuEdgeOptions = {
     },
   ],
 };
+
 const menuNodeOptions = {
   selector: 'node',
   commands: [
@@ -177,19 +183,14 @@ const menuNodeOptions = {
       content: 'Remove',
       select(node) {
         const promise = new Promise((resolve) => {
-          ramble.dialogs.remove(node.id(), () => {
-            resolve();
-          });
+          resolve(node);
         });
+        promise.then(removeNode);
         node.connectedEdges().forEach((edge) => {
-          promise.then((result) => {
-            removeEdge(edge);
-            return result;
-          });
+          promise.then(removeEdge(edge));
         });
-        promise.then((result) => {
+        promise.then(() => {
           cy.remove(node);
-          return result;
         });
       },
     },
@@ -198,7 +199,7 @@ const menuNodeOptions = {
       select(node) {
         const data = node.data();
         data.name = 'Some new name';
-        ramble.dialogs.update(node.id(), data, () => {
+        ramble.dialogs.update(node.id(), data).then(() => {
           node.data(data);
         });
       },
@@ -245,7 +246,7 @@ cy.on('mouseout', 'node', (e) => {
   node.removeClass('hover').addClass('default');
 });
 
-ramble.dialogs.list((result) => {
+ramble.dialogs.list().then((result) => {
   result.forEach((dialog) => {
     const data = dialog;
     data.id = dialog._id;
