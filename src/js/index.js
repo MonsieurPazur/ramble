@@ -53,8 +53,7 @@ const ehOptions = {
   snap: true,
   // Saving newly created edges
   complete(sourceNode, targetNode) {
-    const data = sourceNode.data();
-    data.target = targetNode.id();
+    const data = { $addToSet: { targets: targetNode.id() } };
     ramble.dialogs.update(sourceNode.id(), data);
   },
 };
@@ -141,14 +140,13 @@ $('#add-form').submit((e) => {
 });
 
 const removeNode = node => new Promise(((resolve) => {
-  ramble.dialogs.remove(node.id).then(() => {
+  ramble.dialogs.remove(node.id()).then(() => {
     resolve(node);
   });
 }));
 
 const removeEdge = edge => new Promise(((resolve) => {
-  const data = edge.source().data();
-  data.target = null;
+  const data = { $pull: { targets: edge.target().id() } };
   ramble.dialogs.update(edge.source().id(), data).then(() => {
     cy.remove(edge);
     resolve();
@@ -262,14 +260,16 @@ ramble.dialogs.list().then((result) => {
   });
   result.forEach((dialog) => {
     // If has specified target, create edge.
-    if (dialog.target) {
-      cy.add({
-        group: 'edges',
-        data: {
-          id: (`${dialog.id}_${dialog.target}`),
-          source: dialog.id,
-          target: dialog.target,
-        },
+    if (dialog.targets) {
+      dialog.targets.forEach((target) => {
+        cy.add({
+          group: 'edges',
+          data: {
+            id: (`${dialog.id}_${target}`),
+            source: dialog.id,
+            target,
+          },
+        });
       });
     }
   });
