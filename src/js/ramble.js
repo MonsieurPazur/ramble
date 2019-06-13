@@ -19,9 +19,12 @@ class Ramble {
 				return callback(docs);
 			});
 		},
-		add: (doc, callback) => {
-			this.db.dialogs.insert(doc, function(err, newDoc) {
-				return callback(newDoc);
+		add: (doc) => {
+			const db = this.db.dialogs;
+			return new Promise(function(resolve) {
+				db.insert(doc, function( err, newDoc) {
+					resolve(newDoc);
+				});
 			});
 		},
 		update: (id, data, callback) => {
@@ -43,14 +46,28 @@ class Ramble {
 	}
 
 	characters = {
-		list: (callback) => {
-			this.db.characters.find({}, function(err, docs) {
-				return callback(docs);
+		list: () => {
+			const db = this.db.characters;
+			return new Promise(function(resolve) {
+				db.find({}, function(err, docs) {
+					resolve(docs);
+				});
 			});
 		},
-		get: (name, callback) => {
-			this.db.characters.find({name: name}, function(err, docs) {
-				return callback(docs[0]);
+		get: (name) => {
+			const db = this.db.characters;
+			return new Promise(function(resolve) {
+				db.findOne({name: name}, function(err, doc) {
+					resolve(doc);
+				});
+			});
+		},
+		add: (doc) => {
+			const db = this.db.characters;
+			return new Promise(function(resolve) {
+				db.insert(doc, function(err, newDoc) {
+					resolve(newDoc);
+				});
 			});
 		}
 	}

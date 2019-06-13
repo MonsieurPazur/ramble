@@ -13,8 +13,11 @@
 		<div id="dialog">
 			<form id="add-form">
 				<p>Name:</p>
-				<input type="text" name="name"></input>
+				<input type="text" name="name" />
 				<textarea name="text"></textarea>
+				<input type="text" name="character" list="characters" />
+				<datalist id="characters">
+				</datalist>
 				<input type="submit" value="Add"></input>
 			</form>
 		</div>
@@ -23,7 +26,6 @@
 		<script>
 			require('./src/js/renderer.js')
 			require('./src/js/index.js')
-			require('./autocomplete.js')
 		</script>
 	</body>
 </html>

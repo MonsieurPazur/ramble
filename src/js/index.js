@@ -5,6 +5,7 @@ const edgehandles = require('cytoscape-edgehandles');
 const Ramble = require('./ramble.js');
 
 const { style } = require('./styles.js');
+const { colors } = require('./colors.js');
 
 const ramble = new Ramble();
 
@@ -15,6 +16,14 @@ $(() => {
     autoOpen: false,
   });
 });
+
+function generateCharacterList() {
+  ramble.characters.list((results) => {
+    $.each(results, (i, character) => {
+      $('#characters').append($('<option>').text(character.name));
+    });
+  });
+}
 
 let mouseX = 0;
 let mouseY = 0;
@@ -59,31 +68,86 @@ function removeEdge(edge) {
   });
 }
 
+const generateCharacter = name => new Promise(((resolve) => {
+  ramble.characters.list().then((characters) => {
+    const excludedColors = [];
+    $.each(characters, (i, character) => {
+      excludedColors.push(character.color);
+    });
+    const color = colors.getRandom(excludedColors);
+    const data = {
+      name,
+      color,
+    };
+    resolve(data);
+  });
+}));
+
+const getCharacter = character => new Promise(((resolve) => {
+  ramble.characters.get(character.name).then((existingCharacter) => {
+    if (existingCharacter) {
+      resolve(existingCharacter);
+    } else {
+      ramble.characters.add(character).then((newCharacter) => {
+        resolve(newCharacter);
+      });
+    }
+  });
+}));
+
+const saveDialog = (dialog, character) => new Promise(((resolve) => {
+  const data = dialog;
+  data.character = character;
+  ramble.dialogs.add(data).then((result) => {
+    resolve(result);
+  });
+}));
+
+const updateDialog = dialog => new Promise(((resolve) => {
+  ramble.dialogs.update(dialog._id, dialog, (updatedDialog) => {
+    const node = cy.add({
+      group: 'nodes',
+      data: updatedDialog,
+      position: {
+        x: mouseX,
+        y: mouseY,
+      },
+    });
+
+    node.addClass('default');
+    if (node.data('character')) {
+      node.data('color', node.data('character').color);
+      node.addClass('colored');
+    }
+    resolve();
+  });
+}));
+
+function getDataFromForm(form) {
+  return form.serializeArray().reduce((obj, item) => {
+    const result = obj;
+    result[item.name] = item.value;
+    return result;
+  }, {});
+}
+
 $('#add-form').submit((e) => {
   e.preventDefault();
+
   const form = $(e.currentTarget);
+  const data = getDataFromForm(form);
+  const characterName = data.character;
+  delete data.character;
 
-  const data = form.serializeArray().reduce((obj, item) => {
-    obj[item.name] = item.value;
-    return obj;
-  }, {});
-
-  ramble.dialogs.add(data, (created) => {
-    created.id = created._id;
-    ramble.dialogs.update(created._id, created, (updated) => {
-      cy.add({
-        group: 'nodes',
-        data: updated,
-        position: {
-          x: mouseX,
-          y: mouseY,
-        },
-      });
+  generateCharacter(characterName)
+    .then(getCharacter)
+    .then(character => saveDialog(data, character))
+    .then(updateDialog)
+    .then(() => {
+      generateCharacterList();
+      dialogBox.dialog('close');
+      form.trigger('reset');
     });
-  });
-
-  dialogBox.dialog('close');
-  form.trigger('reset');
 });
 
 // Initialize cxtmenu.
@@ -208,6 +272,8 @@ ramble.dialogs.list((result) => {
       });
     }
   });
+
+  generateCharacterList();
 
   // Redrawing layout after adding nodes and edges.
   cy.layout({
