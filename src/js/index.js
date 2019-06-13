@@ -94,7 +94,7 @@ const saveDialog = (dialog, character) => new Promise(((resolve) => {
   });
 }));
 
-const updateDialog = dialog => new Promise(((resolve) => {
+const spawnDialog = dialog => new Promise(((resolve) => {
   ramble.dialogs.update(dialog._id, dialog).then((updatedDialog) => {
     const node = cy.add({
       group: 'nodes',
@@ -110,7 +110,14 @@ const updateDialog = dialog => new Promise(((resolve) => {
       node.data('color', node.data('character').color);
       node.addClass('colored');
     }
-    resolve();
+    resolve(updatedDialog);
+  });
+}));
+
+const updatePosition = node => new Promise(((resolve) => {
+  const data = { $set: { position: node.position() } };
+  ramble.dialogs.update(node.id(), data).then((updatedDialog) => {
+    resolve(updatedDialog);
   });
 }));
 
@@ -131,7 +138,7 @@ $('#add-form').submit((e) => {
   generateCharacter(characterName)
     .then(getCharacter)
     .then(character => saveDialog(data, character))
-    .then(updateDialog)
+    .then(spawnDialog)
     .then(() => {
       generateCharacterList();
       dialogBox.dialog('close');
@@ -244,14 +251,24 @@ cy.on('mouseout', 'node', (e) => {
   node.removeClass('hover').addClass('default');
 });
 
+cy.on('dragfree', 'node', (e) => {
+  const node = e.target;
+  updatePosition(node);
+});
+
 ramble.dialogs.list().then((result) => {
   result.forEach((dialog) => {
     const data = dialog;
     data.id = dialog._id;
-    const node = cy.add({
+
+    const nodeData = {
       group: 'nodes',
       data,
-    });
+    };
+    if (data.position) {
+      nodeData.position = data.position;
+    }
+    const node = cy.add(nodeData);
     node.addClass('default');
     if (node.data('character')) {
       node.data('color', node.data('character').color);
@@ -277,7 +294,10 @@ ramble.dialogs.list().then((result) => {
   generateCharacterList();
 
   // Redrawing layout after adding nodes and edges.
-  cy.layout({
-    name: 'circle',
-  }).run();
+  const options = {
+    name: 'preset',
+    zoom: 1,
+    fit: false,
+  };
+  cy.layout(options).run();
 });
