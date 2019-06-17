@@ -18,6 +18,7 @@ $(() => {
 });
 
 function generateCharacterList() {
+  $('#characters').empty();
   ramble.characters.list().then((results) => {
     $.each(results, (i, character) => {
       $('#characters').append($('<option>').text(character.name));
@@ -55,6 +56,8 @@ const ehOptions = {
   complete(sourceNode, targetNode) {
     const data = { $addToSet: { targets: targetNode.id() } };
     ramble.dialogs.update(sourceNode.id(), data);
+    console.log(sourceNode.id());
+    console.log(data);
   },
 };
 cy.edgehandles(ehOptions);
@@ -89,6 +92,7 @@ const getCharacter = character => new Promise(((resolve) => {
 const saveDialog = (dialog, character) => new Promise(((resolve) => {
   const data = dialog;
   data.character = character;
+  data.targets = [];
   ramble.dialogs.add(data).then((result) => {
     resolve(result);
   });
@@ -96,9 +100,11 @@ const saveDialog = (dialog, character) => new Promise(((resolve) => {
 
 const spawnDialog = dialog => new Promise(((resolve) => {
   ramble.dialogs.update(dialog._id, dialog).then((updatedDialog) => {
+    const data = updatedDialog;
+    data.id = updatedDialog._id;
     const node = cy.add({
       group: 'nodes',
-      data: updatedDialog,
+      data,
       position: {
         x: mouseX,
         y: mouseY,
@@ -252,6 +258,11 @@ cy.on('mouseout', 'node', (e) => {
 });
 
 cy.on('dragfree', 'node', (e) => {
+  const node = e.target;
+  updatePosition(node);
+});
+
+cy.on('add', 'node', (e) => {
   const node = e.target;
   updatePosition(node);
 });
