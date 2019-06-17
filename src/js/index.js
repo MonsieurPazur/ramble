@@ -17,14 +17,14 @@ $(() => {
   });
 });
 
-function generateCharacterList() {
+const generateCharacterList = () => {
   $('#characters').empty();
   ramble.characters.list().then((results) => {
     $.each(results, (i, character) => {
       $('#characters').append($('<option>').text(character.name));
     });
   });
-}
+};
 
 let mouseX = 0;
 let mouseY = 0;
@@ -34,6 +34,8 @@ $('#graph-container').mousedown((e) => {
     mouseY = e.pageY;
   }
 });
+
+const dialogForm = $('#add-form');
 
 // Register extensions.
 cytoscape.use(edgehandles);
@@ -56,8 +58,6 @@ const ehOptions = {
   complete(sourceNode, targetNode) {
     const data = { $addToSet: { targets: targetNode.id() } };
     ramble.dialogs.update(sourceNode.id(), data);
-    console.log(sourceNode.id());
-    console.log(data);
   },
 };
 cy.edgehandles(ehOptions);
@@ -98,6 +98,14 @@ const saveDialog = (dialog, character) => new Promise(((resolve) => {
   });
 }));
 
+const updateNodeColors = (node) => {
+  node.addClass('default');
+  if (node.data('character')) {
+    node.data('color', node.data('character').color);
+    node.addClass('colored');
+  }
+};
+
 const spawnDialog = dialog => new Promise(((resolve) => {
   ramble.dialogs.update(dialog._id, dialog).then((updatedDialog) => {
     const data = updatedDialog;
@@ -111,11 +119,26 @@ const spawnDialog = dialog => new Promise(((resolve) => {
       },
     });
 
-    node.addClass('default');
-    if (node.data('character')) {
-      node.data('color', node.data('character').color);
-      node.addClass('colored');
-    }
+    updateNodeColors(node);
+    resolve(updatedDialog);
+  });
+}));
+
+const editDialog = (dialog, character) => new Promise(((resolve) => {
+  const _id = dialog.id;
+  let data = dialog;
+  data.character = character;
+
+  // Removing this, so we don't accidentaly set id.
+  delete data.id;
+
+  // Used to update node in graph.
+  const updateData = data;
+  data = { $set: data };
+  ramble.dialogs.update(_id, data).then((updatedDialog) => {
+    const node = cy.$id(_id);
+    node.data(updateData);
+    updateNodeColors(node);
     resolve(updatedDialog);
   });
 }));
@@ -133,7 +156,14 @@ const getDataFromForm = form => form.serializeArray().reduce((obj, item) => {
   return result;
 }, {});
 
-$('#add-form').submit((e) => {
+const populateDialogForm = (data) => {
+  $.each(data, (name, value) => {
+    dialogForm.find(`[name="${name}"]`).val(value);
+  });
+  dialogForm.find('[name="character"]').val(data.character.name);
+};
+
+dialogForm.submit((e) => {
   e.preventDefault();
 
   const form = $(e.currentTarget);
@@ -141,15 +171,29 @@ $('#add-form').submit((e) => {
   const characterName = data.character;
   delete data.character;
 
-  generateCharacter(characterName)
-    .then(getCharacter)
-    .then(character => saveDialog(data, character))
-    .then(spawnDialog)
-    .then(() => {
-      generateCharacterList();
-      dialogBox.dialog('close');
-      form.trigger('reset');
-    });
+  if (data.id) {
+    // Edit
+    generateCharacter(characterName)
+      .then(getCharacter)
+      .then(character => editDialog(data, character))
+      .then(() => {
+        generateCharacterList();
+        dialogBox.dialog('close');
+        form.trigger('reset');
+      });
+  } else {
+    // Add
+    delete data.id;
+    generateCharacter(characterName)
+      .then(getCharacter)
+      .then(character => saveDialog(data, character))
+      .then(spawnDialog)
+      .then(() => {
+        generateCharacterList();
+        dialogBox.dialog('close');
+        form.trigger('reset');
+      });
+  }
 });
 
 const removeNode = node => new Promise(((resolve) => {
@@ -209,10 +253,8 @@ const menuNodeOptions = {
       content: 'Edit',
       select(node) {
         const data = node.data();
-        data.name = 'Some new name';
-        ramble.dialogs.update(node.id(), data).then(() => {
-          node.data(data);
-        });
+        dialogBox.dialog('open');
+        populateDialogForm(data);
       },
     },
     {
@@ -280,11 +322,7 @@ ramble.dialogs.list().then((result) => {
       nodeData.position = data.position;
     }
     const node = cy.add(nodeData);
-    node.addClass('default');
-    if (node.data('character')) {
-      node.data('color', node.data('character').color);
-      node.addClass('colored');
-    }
+    updateNodeColors(node);
   });
   result.forEach((dialog) => {
     // If has specified target, create edge.
