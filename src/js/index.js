@@ -129,7 +129,7 @@ const editDialog = (dialog, character) => new Promise(((resolve) => {
   let data = dialog;
   data.character = character;
 
-  // Removing this, so we don't accidentaly set id.
+  // Removing this, so we don't accidentally set id.
   delete data.id;
 
   // Used to update node in graph.
