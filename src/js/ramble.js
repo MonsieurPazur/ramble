@@ -14,13 +14,27 @@ class Ramble {
     this.db.characters.ensureIndex({ fieldName: 'name', unique: true });
   }
 
+  search(phrase) {
+    return new Promise((resolve) => {
+      const regexp = new RegExp(phrase);
+      this.db.dialogs.find({
+        $or: [
+          { name: regexp },
+          { text: regexp },
+          { 'character.name': regexp },
+        ],
+      }, (err, docs) => {
+        resolve(docs);
+      });
+    });
+  }
+
 dialogs = {
   flush: () => {
     this.db.dialogs.persistence.compactDatafile();
   },
   list: () => new Promise((resolve) => {
     this.db.dialogs.find({}, (err, docs) => {
-      this.dialogs.flush();
       resolve(docs);
     });
   }),
@@ -55,13 +69,11 @@ characters = {
   },
   list: () => new Promise((resolve) => {
     this.db.characters.find({}, (err, docs) => {
-      this.characters.flush();
       resolve(docs);
     });
   }),
   get: name => new Promise((resolve) => {
     this.db.characters.findOne({ name }, (err, doc) => {
-      this.characters.flush();
       resolve(doc);
     });
   }),

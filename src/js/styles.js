@@ -36,6 +36,13 @@ const style = [
     },
   },
   {
+    selector: 'node.highlight',
+    style: {
+      'border-width': 4,
+      'border-color': 'yellow',
+    },
+  },
+  {
     selector: 'edge',
     style: {
       width: 3,

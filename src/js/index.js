@@ -9,12 +9,22 @@ const { colors } = require('./colors.js');
 
 const ramble = new Ramble();
 
-// Initialize dialog.
-const dialogBox = $('#dialog');
+// Initialize dialogs.
+const nodeDialogBox = $('#node-dialog');
+const searchDialogBox = $('#search-dialog');
 $(() => {
-  dialogBox.dialog({
+  nodeDialogBox.dialog({
     autoOpen: false,
   });
+  searchDialogBox.dialog({
+    autoOpen: false,
+  });
+});
+
+const searchButton = $('.search-button');
+searchButton.on('click', (e) => {
+  e.preventDefault();
+  searchDialogBox.dialog('open');
 });
 
 const generateCharacterList = () => {
@@ -34,8 +44,6 @@ $('#graph-container').mousedown((e) => {
     mouseY = e.pageY;
   }
 });
-
-const dialogForm = $('#add-form');
 
 // Register extensions.
 cytoscape.use(edgehandles);
@@ -156,14 +164,18 @@ const getDataFromForm = form => form.serializeArray().reduce((obj, item) => {
   return result;
 }, {});
 
-const populateDialogForm = (data) => {
+// Initialize forms.
+const nodeForm = $('#node-form');
+const searchForm = $('#search-form');
+
+const populateNodeForm = (data) => {
   $.each(data, (name, value) => {
-    dialogForm.find(`[name="${name}"]`).val(value);
+    nodeForm.find(`[name="${name}"]`).val(value);
   });
-  dialogForm.find('[name="character"]').val(data.character.name);
+  nodeForm.find('[name="character"]').val(data.character.name);
 };
 
-dialogForm.submit((e) => {
+nodeForm.submit((e) => {
   e.preventDefault();
 
   const form = $(e.currentTarget);
@@ -178,7 +190,7 @@ dialogForm.submit((e) => {
       .then(character => editDialog(data, character))
       .then(() => {
         generateCharacterList();
-        dialogBox.dialog('close');
+        nodeDialogBox.dialog('close');
         form.trigger('reset');
       });
   } else {
@@ -190,9 +202,35 @@ dialogForm.submit((e) => {
       .then(spawnDialog)
       .then(() => {
         generateCharacterList();
-        dialogBox.dialog('close');
+        nodeDialogBox.dialog('close');
         form.trigger('reset');
       });
+  }
+});
+
+searchForm.submit((e) => {
+  e.preventDefault();
+
+  const form = $(e.currentTarget);
+  const data = getDataFromForm(form);
+
+  ramble.search(data.phrase)
+    .then((results) => {
+      $.each(results, (i, result) => {
+        const node = cy.$id(result._id);
+        node.addClass('highlight');
+      });
+    })
+    .then(() => {
+      searchDialogBox.dialog('close');
+      form.trigger('reset');
+    });
+});
+$(document).keyup((e) => {
+  if (e.key === 'Escape') {
+    $.each(cy.nodes(), (i, node) => {
+      node.removeClass('highlight');
+    });
   }
 });
 
@@ -253,8 +291,8 @@ const menuNodeOptions = {
       content: 'Edit',
       select(node) {
         const data = node.data();
-        dialogBox.dialog('open');
-        populateDialogForm(data);
+        nodeDialogBox.dialog('open');
+        populateNodeForm(data);
       },
     },
     {
@@ -270,7 +308,7 @@ const menuCoreOptions = {
     {
       content: 'New',
       select() {
-        dialogBox.dialog('open');
+        nodeDialogBox.dialog('open');
       },
     },
     {

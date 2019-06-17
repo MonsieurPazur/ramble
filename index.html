@@ -8,18 +8,25 @@
 		<link rel='stylesheet' href='lib/jquery-ui-1.12.1.custom/jquery-ui.min.css'>
 	</head>
 	<body>
-		<div id='graph-container'>
-		</div>
-		<div id="dialog">
-			<form id="add-form">
-				<p>Name:</p>
+		<div id='graph-container'></div>
+		<button class="search-button" type="button">?</button>
+		<div id="node-dialog">
+			<form id="node-form">
+				<p>name:</p>
 				<input type="hidden" name="id" />
 				<input type="text" name="name" />
 				<textarea name="text"></textarea>
 				<input type="text" name="character" list="characters" />
 				<datalist id="characters">
 				</datalist>
-				<input type="submit" value="Add"></input>
+				<input type="submit" value="add"></input>
+			</form>
+		</div>
+		<div id="search-dialog">
+			<form id="search-form">
+				<p>search:</p>
+				<input type="text" name="phrase" />
+				<input type="submit" value="search"></input>
 			</form>
 		</div>
 		<script>window.$ = window.jQuery = require('./lib/jquery-3.4.1.min.js')</script>
