@@ -1,4 +1,5 @@
 const Datastore = require('nedb');
+const { ipcRenderer } = require('electron');
 
 class Ramble {
   constructor() {
@@ -30,7 +31,17 @@ class Ramble {
   }
 
   export() {
-    // TODO
+    return new Promise((resolve) => {
+      this.dialogs.list()
+        .then(this.dialogs.format)
+        .then((dialogs) => {
+          ipcRenderer.send('download', {
+            url: `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(dialogs))}`,
+            properties: {},
+          });
+          resolve(dialogs);
+        });
+    });
   }
 
 dialogs = {
@@ -92,6 +103,27 @@ dialogs = {
       .then((updatedDialog) => {
         resolve(updatedDialog);
       });
+  }),
+  format: rawDialogs => new Promise((resolve) => {
+    const dialogs = {};
+
+    $.each(rawDialogs, (i, dialog) => {
+      const newDialog = {
+        text: dialog.text,
+        character: dialog.character.name,
+        targets: dialog.targets,
+        decision: dialog.targets.length > 1,
+        end: dialog.targets.length === 0,
+      };
+
+      if (dialog.start) {
+        dialogs.start = newDialog;
+      } else {
+        dialogs[dialog._id] = newDialog;
+      }
+    });
+
+    resolve({ dialogs });
   }),
 }
 

@@ -327,6 +327,16 @@ const menuNodeOptions = {
           .then(markAsStart(node));
       },
     },
+    {
+      content: '',
+      select: null,
+      enabled: false,
+    },
+    {
+      content: '',
+      select: null,
+      enabled: false,
+    },
   ],
 };
 const menuCoreOptions = {
