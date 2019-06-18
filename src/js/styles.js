@@ -2,8 +2,8 @@ const style = [
   {
     selector: 'node',
     style: {
-      width: 80,
-      height: 40,
+      width: 60,
+      height: 60,
       shape: 'round-rectangle',
     },
   },
@@ -40,6 +40,12 @@ const style = [
     style: {
       'border-width': 4,
       'border-color': 'yellow',
+    },
+  },
+  {
+    selector: 'node.start',
+    style: {
+      shape: 'ellipse',
     },
   },
   {

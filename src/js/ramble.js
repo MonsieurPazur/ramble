@@ -29,6 +29,10 @@ class Ramble {
     });
   }
 
+  export() {
+    // TODO
+  }
+
 dialogs = {
   flush: () => {
     this.db.dialogs.persistence.compactDatafile();
@@ -49,10 +53,31 @@ dialogs = {
       returnUpdatedDocs: true,
     };
     return new Promise((resolve) => {
-      this.db.dialogs.update({ _id: id }, data, options, (err, numAffected, affectedDocuments) => {
-        this.dialogs.flush();
-        resolve(affectedDocuments);
-      });
+      this.db.dialogs.update(
+        { _id: id },
+        data,
+        options,
+        (err, numAffected, affectedDocuments) => {
+          this.dialogs.flush();
+          resolve(affectedDocuments);
+        },
+      );
+    });
+  },
+  unmarkStart: () => {
+    const options = {
+      returnUpdatedDocs: true,
+    };
+    return new Promise((resolve) => {
+      this.db.dialogs.update(
+        { start: true },
+        { $set: { start: false } },
+        options,
+        (err, numAffected, affectedDocuments) => {
+          this.dialogs.flush();
+          resolve(affectedDocuments);
+        },
+      );
     });
   },
   remove: id => new Promise((resolve) => {
@@ -60,6 +85,13 @@ dialogs = {
       this.dialogs.flush();
       resolve(numRemoved);
     });
+  }),
+  markAsStart: id => new Promise((resolve) => {
+    this.dialogs.unmarkStart()
+      .then(this.dialogs.update(id, { $set: { start: true } }))
+      .then((updatedDialog) => {
+        resolve(updatedDialog);
+      });
   }),
 }
 

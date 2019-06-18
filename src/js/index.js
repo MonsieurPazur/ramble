@@ -2,8 +2,9 @@
 const cytoscape = require('cytoscape');
 const cxtmenu = require('cytoscape-cxtmenu');
 const edgehandles = require('cytoscape-edgehandles');
-const Ramble = require('./ramble.js');
+const { fileDialog } = require('electron').remote;
 
+const Ramble = require('./ramble.js');
 const { style } = require('./styles.js');
 const { colors } = require('./colors.js');
 
@@ -248,6 +249,30 @@ const removeEdge = edge => new Promise(((resolve) => {
   });
 }));
 
+const updateNodeTypes = () => {
+  $.each(cy.nodes(), (i, node) => {
+    if (node.data('start')) {
+      node.addClass('start');
+    } else {
+      node.removeClass('start');
+    }
+  });
+};
+
+const unmarkStart = () => new Promise((resolve) => {
+  $.each(cy.nodes(), (i, node) => {
+    node.data({ start: false });
+  });
+  resolve();
+});
+
+const markAsStart = (node) => {
+  ramble.dialogs.markAsStart(node.id()).then(() => {
+    node.data({ start: true });
+    updateNodeTypes();
+  });
+};
+
 // Initialize cxtmenu.
 const menuEdgeOptions = {
   selector: 'edge',
@@ -296,9 +321,11 @@ const menuNodeOptions = {
       },
     },
     {
-      content: '',
-      select: null,
-      enabled: false,
+      content: 'Mark as <strong>Start</strong>',
+      select(node) {
+        unmarkStart()
+          .then(markAsStart(node));
+      },
     },
   ],
 };
@@ -379,6 +406,7 @@ ramble.dialogs.list().then((result) => {
   });
 
   generateCharacterList();
+  updateNodeTypes();
 
   // Redrawing layout after adding nodes and edges.
   const options = {
