@@ -54,7 +54,7 @@ function createWindow() {
 app.on('ready', () => {
   createWindow();
   ipcMain.on('download', (event, info) => {
-    download(BrowserWindow.getFocusedWindow(), info.url, info.properties)
+    download(mainWindow, info.url, info.properties)
       .then(dl => mainWindow.webContents.send('download complete', dl.getSavePath()));
   });
 });

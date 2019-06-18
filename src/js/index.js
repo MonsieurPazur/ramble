@@ -426,3 +426,4 @@ ramble.dialogs.list().then((result) => {
   };
   cy.layout(options).run();
 });
+

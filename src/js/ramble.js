@@ -1,5 +1,6 @@
 const Datastore = require('nedb');
 const { ipcRenderer } = require('electron');
+const { dialog: saveDialog } = require('electron').remote;
 
 class Ramble {
   constructor() {
@@ -35,9 +36,14 @@ class Ramble {
       this.dialogs.list()
         .then(this.dialogs.format)
         .then((dialogs) => {
+          const where = saveDialog.showSaveDialog({ defaultPath: './dialogs.json' });
+
           ipcRenderer.send('download', {
             url: `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(dialogs))}`,
-            properties: {},
+            properties: {
+              directory: where.match(/^.*(\\|\/|:)/)[0],
+              filename: where.replace(/^.*(\\|\/|:)/, ''),
+            },
           });
           resolve(dialogs);
         });
