@@ -1,6 +1,10 @@
 $error-color: #ef9a9a;
 $success-color: #a5d6a7;
 
+$primary-color: #546e7a;
+$light-color: #819ca9;
+$dark-color: #29434e;
+
 @mixin message($color) {
 	color: darken($color, 40%);
 	background-color: $color;

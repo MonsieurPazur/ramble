@@ -1,10 +1,17 @@
 const colors = {
   list: [
-    '#341256',
-    '#00aa23',
-    '#76f10b',
-    '#00ff44',
-    '#99aa1f',
+    '#efd78d',
+    '#e97e2e',
+    '#898886',
+    '#874338',
+    '#73a1b0',
+    '#87806d',
+    '#ff7e57',
+    '#3c3642',
+    '#85496f',
+    '#a49375',
+    '#c6612b',
+    '#a23419',
   ],
   getRandom: (excluded) => {
     const available = this.colors.list

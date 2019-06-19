@@ -247,7 +247,6 @@ const removeEdge = edge => new Promise(((resolve) => {
   const data = { $pull: { targets: edge.target().id() } };
   ramble.dialogs.update(edge.source().id(), data).then(() => {
     cy.remove(edge);
-    messages.success('Removed edge.');
     resolve();
   });
 }));
