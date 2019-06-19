@@ -10,6 +10,7 @@
   "license": "UNLICENSED",
   "private": true,
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.9.0",
     "babel-eslint": "^10.0.1",
     "electron": "^5.0.2",
     "electron-dl": "^1.14.0",

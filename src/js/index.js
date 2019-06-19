@@ -14,20 +14,10 @@ const messages = new MessageComponent();
 
 // Initialize dialogs.
 const nodeDialogBox = $('#node-dialog');
-const searchDialogBox = $('#search-dialog');
 $(() => {
   nodeDialogBox.dialog({
     autoOpen: false,
   });
-  searchDialogBox.dialog({
-    autoOpen: false,
-  });
-});
-
-const searchButton = $('.search-button');
-searchButton.on('click', (e) => {
-  e.preventDefault();
-  searchDialogBox.dialog('open');
 });
 
 const generateCharacterList = () => {
@@ -219,13 +209,16 @@ searchForm.submit((e) => {
 
   ramble.search(data.phrase)
     .then((results) => {
-      $.each(results, (i, result) => {
-        const node = cy.$id(result._id);
-        node.addClass('highlight');
-      });
+      if (results.length === 0) {
+        messages.error('Nothing found.');
+      } else {
+        $.each(results, (i, result) => {
+          const node = cy.$id(result._id);
+          node.addClass('highlight');
+        });
+      }
     })
     .then(() => {
-      searchDialogBox.dialog('close');
       form.trigger('reset');
     });
 });

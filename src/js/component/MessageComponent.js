@@ -2,9 +2,9 @@ class MessageComponent {
   constructor() {
     this.container = $('#message-container');
     this.timeout = [];
-    this.effectDuration = 500;
-    this.timeout.error = 5000 + this.effectDuration;
-    this.timeout.success = 3000 + this.effectDuration;
+    this.effectDuration = 300;
+    this.timeout.error = 4000 + this.effectDuration;
+    this.timeout.success = 2000 + this.effectDuration;
   }
 
   addMessage(type, text) {

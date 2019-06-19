@@ -4,12 +4,16 @@
 		<meta charset="UTF-8">
 		<title>Ramble</title>
 		<link rel='stylesheet' href='node_modules/normalize.css/normalize.css'>
+		<link rel='stylesheet' href='node_modules/@fortawesome/fontawesome-free/css/all.css'>
 		<link rel='stylesheet' href='dist/css/styles.css'>
 		<link rel='stylesheet' href='lib/jquery-ui-1.12.1.custom/jquery-ui.min.css'>
 	</head>
 	<body>
 		<div id='graph-container'></div>
-		<button class="search-button" type="button">?</button>
+		<form id="search-form">
+			<input class="search-input" type="text" name="phrase" />
+			<button class="search-button" type="submit"><i class="fas fa-search fa-lg"></i></button>
+		</form>
 		<div id="node-dialog">
 			<form id="node-form">
 				<p>name:</p>
@@ -20,13 +24,6 @@
 				<datalist id="characters">
 				</datalist>
 				<input type="submit" value="add"></input>
-			</form>
-		</div>
-		<div id="search-dialog">
-			<form id="search-form">
-				<p>search:</p>
-				<input type="text" name="phrase" />
-				<input type="submit" value="search"></input>
 			</form>
 		</div>
 		<div id="message-container"></div>
