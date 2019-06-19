@@ -14,7 +14,8 @@ const style = [
       'text-halign': 'center',
       'text-valign': 'bottom',
       'text-margin-y': 5,
-      'font-style': 'bold',
+      'font-size': '1.3em',
+      'font-family': 'Montserrat',
     },
   },
   {
@@ -26,7 +27,9 @@ const style = [
       'text-wrap': 'wrap',
       'text-max-width': 200,
       'text-margin-x': 5,
+      'font-size': '1.2em',
       'font-style': 'italic',
+      'font-family': 'Merriweather',
     },
   },
   {
