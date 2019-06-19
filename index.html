@@ -11,16 +11,16 @@
 	<body>
 		<div id='graph-container'></div>
 		<form id="search-form">
-			<input class="search-input" type="text" name="phrase" />
+			<input class="search-input not-empty" type="text" name="phrase" />
 			<button class="search-button" type="submit"><i class="fas fa-search fa-lg"></i></button>
 		</form>
 		<div id="node-dialog">
 			<form id="node-form">
 				<p>name:</p>
 				<input type="hidden" name="id" />
-				<input type="text" name="name" />
-				<textarea name="text"></textarea>
-				<input type="text" name="character" list="characters" />
+				<input class="not-empty" type="text" name="name" />
+				<textarea class="not-empty" name="text"></textarea>
+				<input class="not-empty" type="text" name="character" list="characters" />
 				<datalist id="characters">
 				</datalist>
 				<input type="submit" value="add"></input>

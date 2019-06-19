@@ -161,6 +161,28 @@ const getDataFromForm = form => form.serializeArray().reduce((obj, item) => {
 const nodeForm = $('#node-form');
 const searchForm = $('#search-form');
 
+const validateInput = (input) => {
+  if ($(input).hasClass('not-empty') && !$(input).val()) {
+    messages.error("Can't be empty.");
+    $(input).addClass('validate-error');
+    setTimeout(() => {
+      $(input).removeClass('validate-error');
+    }, 2000);
+    return false;
+  }
+  return true;
+};
+
+const validateForm = (form) => {
+  const inputs = form.find('input, textarea');
+
+  let valid = true;
+  $.each(inputs, (i, input) => {
+    valid = valid && validateInput(input);
+  });
+  return valid;
+};
+
 const populateNodeForm = (data) => {
   $.each(data, (name, value) => {
     nodeForm.find(`[name="${name}"]`).val(value);
@@ -175,6 +197,10 @@ nodeForm.submit((e) => {
   const data = getDataFromForm(form);
   const characterName = data.character;
   delete data.character;
+
+  if (!validateForm(form)) {
+    return;
+  }
 
   if (data.id) {
     // Edit
@@ -206,6 +232,10 @@ searchForm.submit((e) => {
 
   const form = $(e.currentTarget);
   const data = getDataFromForm(form);
+
+  if (!validateForm(form)) {
+    return;
+  }
 
   ramble.search(data.phrase)
     .then((results) => {
