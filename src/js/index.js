@@ -2,13 +2,15 @@
 const cytoscape = require('cytoscape');
 const cxtmenu = require('cytoscape-cxtmenu');
 const edgehandles = require('cytoscape-edgehandles');
-const { fileDialog } = require('electron').remote;
 
-const Ramble = require('./ramble.js');
+const Ramble = require('./Ramble.js');
+const MessageComponent = require('./component/MessageComponent.js');
+
 const { style } = require('./styles.js');
 const { colors } = require('./colors.js');
 
 const ramble = new Ramble();
+const messages = new MessageComponent();
 
 // Initialize dialogs.
 const nodeDialogBox = $('#node-dialog');
@@ -245,6 +247,7 @@ const removeEdge = edge => new Promise(((resolve) => {
   const data = { $pull: { targets: edge.target().id() } };
   ramble.dialogs.update(edge.source().id(), data).then(() => {
     cy.remove(edge);
+    messages.success('Removed edge.');
     resolve();
   });
 }));
@@ -426,4 +429,3 @@ ramble.dialogs.list().then((result) => {
   };
   cy.layout(options).run();
 });
-

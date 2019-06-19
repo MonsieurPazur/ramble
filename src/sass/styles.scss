@@ -1,3 +1,12 @@
+$error-color: #ef9a9a;
+$success-color: #a5d6a7;
+
+@mixin message($color) {
+	color: darken($color, 40%);
+	background-color: $color;
+	border-color: darken($color, 20%);
+}
+
 html, body {
 	height: 100%;
 }
@@ -10,4 +19,32 @@ html, body {
 	position: fixed;
 	top: 0;
 	right: 0;
+}
+
+#message-container {
+	position: fixed;
+	top: 0;
+	left: 50%;
+	right: 50%;
+	display: flex;
+	flex-direction: column;
+	width: 30em;
+	height: auto;
+	margin-left: -15em;
+}
+
+.message {
+	position: relative;
+	display: none;
+	width: 100%;
+	padding: 8px;
+	margin: 8px;
+	text-align: center;
+	border: 2px solid black;
+	&.error {
+		@include message($error-color);
+	}
+	&.success {
+		@include message($success-color);
+	}
 }
