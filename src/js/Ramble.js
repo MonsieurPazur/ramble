@@ -13,6 +13,10 @@ class Ramble {
       filename: 'data/characters.db',
       autoload: true,
     });
+    this.db.conversations = new Datastore({
+      filename: 'data/conversations.db',
+      autoload: true,
+    });
     this.db.characters.ensureIndex({ fieldName: 'name', unique: true });
   }
 
@@ -151,6 +155,29 @@ characters = {
     this.db.characters.insert(doc, (err, newDoc) => {
       this.characters.flush();
       resolve(newDoc);
+    });
+  }),
+}
+
+conversations = {
+  flush: () => {
+    this.db.conversations.persistence.compactDatafile();
+  },
+  list: () => new Promise((resolve) => {
+    this.db.conversations.find({}, (err, docs) => {
+      resolve(docs);
+    });
+  }),
+  add: doc => new Promise((resolve) => {
+    this.db.conversations.insert(doc, (err, newDoc) => {
+      this.conversations.flush();
+      resolve(newDoc);
+    });
+  }),
+  remove: id => new Promise((resolve) => {
+    this.db.coversations.remove({ _id: id }, {}, (err, numRemoved) => {
+      this.dialogs.flush();
+      resolve(numRemoved);
     });
   }),
 }

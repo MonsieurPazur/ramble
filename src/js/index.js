@@ -157,6 +157,9 @@ const getDataFromForm = form => form.serializeArray().reduce((obj, item) => {
   return result;
 }, {});
 
+// Back-to-menu button.
+const backButton = $('.button.back-button');
+
 // Initialize forms.
 const nodeForm = $('#node-form');
 const searchForm = $('#search-form');
@@ -225,6 +228,11 @@ nodeForm.submit((e) => {
         form.trigger('reset');
       });
   }
+});
+
+backButton.click((e) => {
+  e.preventDefault();
+  window.location.href = './menu.html';
 });
 
 searchForm.submit((e) => {

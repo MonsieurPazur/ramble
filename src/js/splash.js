@@ -13,7 +13,7 @@ new TypeIt('#header', {
 })
   .type('Ramble')
   .pause(500)
-  .options({ speed: 500 })
+  .options({ speed: 300 })
   .type('...')
   .pause(500)
   .options({ speed: 100 })

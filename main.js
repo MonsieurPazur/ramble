@@ -31,7 +31,8 @@ function createWindow() {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadFile('splash.html');
+  //mainWindow.loadFile('splash.html');
+  mainWindow.loadFile('menu.html');
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
