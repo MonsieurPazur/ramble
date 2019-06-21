@@ -20,6 +20,13 @@ $(() => {
   });
 });
 
+const getConversationName = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('conversation');
+};
+
+const conversationName = getConversationName();
+
 const generateCharacterList = () => {
   $('#characters').empty();
   ramble.characters.list().then((results) => {
@@ -94,6 +101,7 @@ const saveDialog = (dialog, character) => new Promise(((resolve) => {
   const data = dialog;
   data.character = character;
   data.targets = [];
+  data.conversation = conversationName;
   ramble.dialogs.add(data).then((result) => {
     resolve(result);
   });
@@ -423,7 +431,7 @@ cy.on('add', 'node', (e) => {
   updatePosition(node);
 });
 
-ramble.dialogs.list().then((result) => {
+ramble.dialogs.list(conversationName).then((result) => {
   result.forEach((dialog) => {
     const data = dialog;
     data.id = dialog._id;

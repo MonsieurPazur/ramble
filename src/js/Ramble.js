@@ -58,8 +58,8 @@ dialogs = {
   flush: () => {
     this.db.dialogs.persistence.compactDatafile();
   },
-  list: () => new Promise((resolve) => {
-    this.db.dialogs.find({}, (err, docs) => {
+  list: conversation => new Promise((resolve) => {
+    this.db.dialogs.find({ conversation }, (err, docs) => {
       resolve(docs);
     });
   }),

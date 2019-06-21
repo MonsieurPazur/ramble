@@ -32,7 +32,7 @@ ramble.conversations.list().then((result) => {
 });
 
 $('.conversation').dblclick(function redirect() {
-  window.location.href = `./index.html?${$(this).data('name')}`;
+  window.location.href = `./index.html?conversation=${$(this).data('name')}`;
 });
 
 
