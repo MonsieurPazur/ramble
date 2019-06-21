@@ -2,8 +2,9 @@
 A simple tool for creating dialogs, cutscenes and stories
 
 ### Roadmap (next version)
-- ~Saving node position in database~
-- ~Saving multiple sources/targets to database~
-- Allow for multiple networks (shared characters)
-- ~Editing~
-- ~Searching~
+- Restrict find queries to current conversation name
+- Fix dialog styles
+- Character images instead of color-coding
+- Add brand
+- Add tutorial (probably in a form of README)
+- Smooth transitions between screens
