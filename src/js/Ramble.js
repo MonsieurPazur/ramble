@@ -35,12 +35,12 @@ class Ramble {
     });
   }
 
-  export() {
+  export(conversation) {
     return new Promise((resolve) => {
-      this.dialogs.list()
+      this.dialogs.list(conversation)
         .then(this.dialogs.format)
         .then((dialogs) => {
-          const where = saveDialog.showSaveDialog({ defaultPath: './dialogs.json' });
+          const where = saveDialog.showSaveDialog({ defaultPath: `./${conversation}.json` });
 
           ipcRenderer.send('download', {
             url: `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(dialogs))}`,
@@ -85,13 +85,16 @@ dialogs = {
       );
     });
   },
-  unmarkStart: () => {
+  unmarkStart: (conversation) => {
     const options = {
       returnUpdatedDocs: true,
     };
     return new Promise((resolve) => {
       this.db.dialogs.update(
-        { start: true },
+        {
+          start: true,
+          conversation,
+        },
         { $set: { start: false } },
         options,
         (err, numAffected, affectedDocuments) => {
@@ -107,8 +110,8 @@ dialogs = {
       resolve(numRemoved);
     });
   }),
-  markAsStart: id => new Promise((resolve) => {
-    this.dialogs.unmarkStart()
+  markAsStart: (id, conversation) => new Promise((resolve) => {
+    this.dialogs.unmarkStart(conversation)
       .then(this.dialogs.update(id, { $set: { start: true } }))
       .then((updatedDialog) => {
         resolve(updatedDialog);

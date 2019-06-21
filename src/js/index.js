@@ -308,7 +308,7 @@ const unmarkStart = () => new Promise((resolve) => {
 });
 
 const markAsStart = (node) => {
-  ramble.dialogs.markAsStart(node.id()).then(() => {
+  ramble.dialogs.markAsStart(node.id(), conversationName).then(() => {
     node.data({ start: true });
     updateNodeTypes();
   });

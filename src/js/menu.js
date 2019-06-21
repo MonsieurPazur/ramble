@@ -6,9 +6,12 @@ const messages = new MessageComponent();
 
 const list = $('.menu-conversations');
 const defaultConversation = $('.conversation.default');
+const conversationForm = $('#conversation-form');
+
 const addButton = $('.conversation-add');
 const deleteButton = $('.conversation-delete');
-const conversationForm = $('#conversation-form');
+const viewButton = $('.conversation-view');
+const downloadButton = $('.conversation-download');
 
 const addToList = (data) => {
   const record = defaultConversation.clone(true);
@@ -31,8 +34,12 @@ ramble.conversations.list().then((result) => {
   });
 });
 
+const redirectToGraph = (conversationName) => {
+  window.location.href = `./index.html?conversation=${conversationName}`;
+};
+
 $('.conversation').dblclick(function redirect() {
-  window.location.href = `./index.html?conversation=${$(this).data('name')}`;
+  redirectToGraph($(this).data('name'));
 });
 
 
@@ -54,6 +61,14 @@ deleteButton.click(function removeConversation() {
   ramble.conversations.remove(id).then(() => {
     removeFromList(id);
   });
+});
+
+viewButton.click(function redirect() {
+  redirectToGraph($(this).closest('.conversation').attr('data-name'));
+});
+
+downloadButton.click(function download() {
+  ramble.export($(this).closest('.conversation').attr('data-name'));
 });
 
 const validateInput = (input) => {

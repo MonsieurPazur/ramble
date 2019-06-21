@@ -219,13 +219,16 @@ html, body {
 	padding: 0 16px;
 	color: $dark-color;
 	p {
-		width: 84%;
+		width: 76%;
 		font-size: 1.2em;
 	}
 	.icons {
-		width: 16%;
+		width: 24%;
 		i {
 			padding: 0 4px;
+			&:hover {
+				color: darken($dark-color, 20%);
+			}
 		}
 	}
 	&:nth-child(even) {
