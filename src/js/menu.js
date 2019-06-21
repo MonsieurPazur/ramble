@@ -48,6 +48,9 @@ const conversationDialogBox = $('#conversation-dialog');
 $(() => {
   conversationDialogBox.dialog({
     autoOpen: false,
+    resizable: false,
+    modal: true,
+    draggable: false,
   });
 });
 

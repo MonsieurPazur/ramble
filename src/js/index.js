@@ -17,6 +17,9 @@ const nodeDialogBox = $('#node-dialog');
 $(() => {
   nodeDialogBox.dialog({
     autoOpen: false,
+    resizable: false,
+    modal: true,
+    draggable: false,
   });
 });
 
