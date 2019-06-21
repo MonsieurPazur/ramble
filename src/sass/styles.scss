@@ -1,9 +1,14 @@
 $error-color: #ef9a9a;
 $success-color: #a5d6a7;
 
+$highlight-primary-color: #a23419;
+$highlight-secondary-color: #f8efb6;
+
 $primary-color: #546e7a;
 $light-color: #819ca9;
 $dark-color: #29434e;
+
+$light-text-color: lighten($light-color, 20%);
 
 @font-face {
 	font-family: 'Montserrat';
@@ -51,8 +56,13 @@ html, body {
 	height: 100%;
 }
 
+#main {
+	height: 100%;
+}
+
 #graph-container {
 	min-height: 100%;
+	background-color: lighten($light-color, 20%);
 }
 
 .search-button {
@@ -118,5 +128,31 @@ html, body {
 }
 
 .validate-error {
-	border: 4px solid red;
+	border: 4px solid $error-color;
+}
+
+.cxtmenu-content {
+	@include defaultFont();
+	font-size: 1em;
+}
+
+#menu {
+	height: 100%;
+	background-color: $dark-color;
+}
+
+#splash {
+	display: flex;
+	height: 100%;
+	background-color: $dark-color;
+	color: $light-text-color;;
+	justify-content: center;
+	align-items: center;
+}
+
+#header {
+	@include textFont();
+	font-size: 6em;
+	text-align: center;
+	letter-spacing: 0.2em;
 }

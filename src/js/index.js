@@ -317,6 +317,8 @@ const menuEdgeOptions = {
       enabled: false,
     },
   ],
+  fillColor: 'rgba(84, 110, 122, 0.75)',
+  activeFillColor: 'rgba(41, 67, 78, 0.75)',
 };
 
 const menuNodeOptions = {
@@ -363,6 +365,8 @@ const menuNodeOptions = {
       enabled: false,
     },
   ],
+  fillColor: 'rgba(84, 110, 122, 0.75)',
+  activeFillColor: 'rgba(41, 67, 78, 0.75)',
 };
 const menuCoreOptions = {
   selector: 'core',
@@ -384,6 +388,8 @@ const menuCoreOptions = {
       enabled: false,
     },
   ],
+  fillColor: 'rgba(84, 110, 122, 0.75)',
+  activeFillColor: 'rgba(41, 67, 78, 0.75)',
 };
 cy.cxtmenu(menuEdgeOptions);
 cy.cxtmenu(menuNodeOptions);

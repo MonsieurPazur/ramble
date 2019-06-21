@@ -5,6 +5,8 @@ const style = [
       width: 60,
       height: 60,
       shape: 'round-rectangle',
+      'transition-property': 'background-color',
+      'transition-duration': '0.3s',
     },
   },
   {
@@ -41,8 +43,7 @@ const style = [
   {
     selector: 'node.highlight',
     style: {
-      'border-width': 4,
-      'border-color': 'yellow',
+      'background-color': '#f8efb6',
     },
   },
   {
@@ -55,8 +56,9 @@ const style = [
     selector: 'edge',
     style: {
       width: 3,
-      'line-color': '#ccc',
-      'target-arrow-color': '#ccc',
+      'line-color': '#546e7a',
+      'target-arrow-color': '#546e7a',
+      'arrow-scale': 1.5,
       'target-arrow-shape': 'triangle-backcurve',
       'curve-style': 'unbundled-bezier',
     },
@@ -64,20 +66,20 @@ const style = [
   {
     selector: '.eh-source',
     style: {
-      'border-width': 2,
-      'border-color': 'red',
+      'border-width': 4,
+      'border-color': '#a23419',
     },
   },
   {
     selector: '.eh-target',
     style: {
-      'background-color': 'red',
+      'background-color': '#a23419',
     },
   },
   {
     selector: '.eh-handle',
     style: {
-      'background-color': 'red',
+      'background-color': '#a23419',
       width: 20,
       height: 20,
       'border-width': 5,

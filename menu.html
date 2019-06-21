@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel='stylesheet' href='node_modules/normalize.css/normalize.css'>
+		<link rel='stylesheet' href='node_modules/@fortawesome/fontawesome-free/css/all.css'>
+		<link rel='stylesheet' href='dist/css/styles.css'>
+		<link rel='stylesheet' href='lib/jquery-ui-1.12.1.custom/jquery-ui.min.css'>
+	</head>
+	<body>
+		<div id="main">
+			<nav id="menu">
+				<a href="./index.html">Na główną!</a>
+			</nav>
+			<div id="message-container"></div>
+		</div>
+		<script>window.$ = window.jQuery = require('./lib/jquery-3.4.1.min.js')</script>
+		<script>require('./lib/jquery-ui-1.12.1.custom/jquery-ui.min.js')</script>
+		<script>
+			require('./src/js/renderer.js')
+		</script>
+	</body>
+</html>
