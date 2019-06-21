@@ -175,7 +175,7 @@ conversations = {
     });
   }),
   remove: id => new Promise((resolve) => {
-    this.db.coversations.remove({ _id: id }, {}, (err, numRemoved) => {
+    this.db.conversations.remove({ _id: id }, {}, (err, numRemoved) => {
       this.dialogs.flush();
       resolve(numRemoved);
     });

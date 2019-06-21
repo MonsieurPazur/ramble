@@ -7,24 +7,31 @@ const messages = new MessageComponent();
 const list = $('.menu-conversations');
 const defaultConversation = $('.conversation.default');
 const addButton = $('.conversation-add');
+const deleteButton = $('.conversation-delete');
 const conversationForm = $('#conversation-form');
 
-const addToList = (name) => {
+const addToList = (data) => {
   const record = defaultConversation.clone(true);
-  record.data('name', name);
-  record.find('.name').text(name);
   record.removeClass('default');
+  record.attr('data-name', data.name);
+  record.attr('data-id', data._id);
+  record.find('.name').text(data.name);
   list.append(record);
+};
+
+const removeFromList = (id) => {
+  const record = $(`.conversation[data-id='${id}']`);
+  record.remove();
 };
 
 ramble.conversations.list().then((result) => {
   result.forEach((conversation) => {
     const data = conversation;
-    addToList(data.name);
+    addToList(data);
   });
 });
 
-$('.conversation').dblclick(() => {
+$('.conversation').dblclick(function redirect() {
   window.location.href = `./index.html?${$(this).data('name')}`;
 });
 
@@ -40,6 +47,13 @@ $(() => {
 addButton.click((e) => {
   e.preventDefault();
   conversationDialogBox.dialog('open');
+});
+
+deleteButton.click(function removeConversation() {
+  const id = $(this).closest('.conversation').attr('data-id');
+  ramble.conversations.remove(id).then(() => {
+    removeFromList(id);
+  });
 });
 
 const validateInput = (input) => {
@@ -89,8 +103,8 @@ conversationForm.submit((e) => {
   // Add
   delete data.id;
   generateConversation(data.name)
-    .then(() => {
-      addToList(data.name);
+    .then((result) => {
+      addToList(result);
       conversationDialogBox.dialog('close');
       form.trigger('reset');
     });
