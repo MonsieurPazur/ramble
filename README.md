@@ -19,6 +19,19 @@ This tool is still in production, lacking some smart and useful functionalities 
 [![Electron](logo/electron_logo.png)](https://electronjs.org/)
 [![NeDB](logo/nedb_logo.png)](https://github.com/louischatriot/nedb)
 
+### How to
+#### Install:
+```sh
+npm install
+```
+#### Use:
+```sh
+npm start
+```
+
+No build to any platform is currently provided.
+In order to clean Ramble database, remove data/\*.db files.
+
 ### License
 Dunno, *Beerware*?
 It's free to use, modify and do whatever you want, even without crediting me anywhere. 
