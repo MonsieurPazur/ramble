@@ -1,5 +1,9 @@
 # Ramble
-A simple tool for creating dialogs, cutscenes and stories
+A simple tool for creating dialogs, cutscenes and stories.
+
+### Made with:
+![Cytoscape](logo/cytoscape_logo.png)
+![Electron](logo/electron_logo.png)
 
 ### Roadmap (next version)
 - [x] Styles
