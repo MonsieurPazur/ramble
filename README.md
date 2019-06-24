@@ -29,7 +29,7 @@ npm install
 npm start
 ```
 
-No build to any platform is currently provided.
+No build to any platform is currently provided.  
 In order to clean Ramble database, remove data/\*.db files.
 
 ### License
