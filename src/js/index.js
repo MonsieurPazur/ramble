@@ -18,8 +18,10 @@ $(() => {
   nodeDialogBox.dialog({
     autoOpen: false,
     resizable: false,
-    modal: true,
     draggable: false,
+
+    width: 480,
+    height: 360,
   });
 });
 
@@ -178,10 +180,6 @@ const searchForm = $('#search-form');
 const validateInput = (input) => {
   if ($(input).hasClass('not-empty') && !$(input).val()) {
     messages.error("Can't be empty.");
-    $(input).addClass('validate-error');
-    setTimeout(() => {
-      $(input).removeClass('validate-error');
-    }, 2000);
     return false;
   }
   return true;

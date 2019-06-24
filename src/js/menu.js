@@ -49,8 +49,10 @@ $(() => {
   conversationDialogBox.dialog({
     autoOpen: false,
     resizable: false,
-    modal: true,
     draggable: false,
+
+    width: 480,
+    height: 280,
   });
 });
 
@@ -77,10 +79,6 @@ downloadButton.click(function download() {
 const validateInput = (input) => {
   if ($(input).hasClass('not-empty') && !$(input).val()) {
     messages.error("Can't be empty.");
-    $(input).addClass('validate-error');
-    setTimeout(() => {
-      $(input).removeClass('validate-error');
-    }, 2000);
     return false;
   }
   return true;
