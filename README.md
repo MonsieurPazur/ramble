@@ -17,6 +17,6 @@ This tool is still in production, lacking some smart and useful functionalities 
 [![Electron](logo/electron_logo.png)](https://electronjs.org/)
 [![NeDB](logo/nedb_logo.png)](https://github.com/louischatriot/nedb)
 
-### Copyright
+### License
 Dunno, *Beerware*?
 It's free to use, modify and do whatever you want, even without crediting me anywhere. 
