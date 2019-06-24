@@ -1,6 +1,6 @@
 {
   "name": "Ramble",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple tool for creating dialogs, cutscenes and stories",
   "main": "main.js",
   "scripts": {
