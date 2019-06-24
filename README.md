@@ -2,8 +2,8 @@
 A simple tool for creating dialogs, cutscenes and stories.
 
 ### Made with:
-![Cytoscape](logo/cytoscape_logo.png)
-![Electron](logo/electron_logo.png)
+[![Cytoscape](logo/cytoscape_logo.png)](https://cytoscape.org/)
+[![Electron](logo/electron_logo.png)](https://electronjs.org/)
 
 ### Roadmap (next version)
 - [x] Styles
