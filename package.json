@@ -4,7 +4,7 @@
   "description": "A simple tool for creating dialogs, cutscenes and stories",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "./node_modules/gulp/bin/gulp.js css && ./node_modules/electron/dist/electron . "
   },
   "author": "Michał Skwarek",
   "license": "UNLICENSED",
