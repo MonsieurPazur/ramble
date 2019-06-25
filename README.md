@@ -23,6 +23,7 @@ This tool is still in production, lacking some smart and useful functionalities 
 #### Install
 ```sh
 npm install
+./node_modules/gulp/bin/gulp.js
 ```
 #### Use
 ```sh
