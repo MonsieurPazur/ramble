@@ -10,6 +10,7 @@ class MessageComponent {
   addMessage(type, text) {
     const message = $(`<div class="message ${type}">${text}</div>`);
     this.container.append(message);
+    message.hide();
     message.show('drop', { direction: 'up' }, this.effectDuration, () => {
       setTimeout(() => {
         message.fadeOut(this.effectDuration, () => {
