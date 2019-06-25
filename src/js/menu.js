@@ -52,7 +52,7 @@ $(() => {
     draggable: false,
 
     width: 480,
-    height: 280,
+    height: 320,
   });
 });
 

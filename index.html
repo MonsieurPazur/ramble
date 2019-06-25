@@ -18,21 +18,29 @@
 			</form>
 			<div id="node-dialog" title="Node">
 				<form id="node-form">
-					<input type="hidden" name="id" />
 					<div class="form-row">
-						<label for="name">Name:</label>
-						<input class="not-empty" type="text" name="name" />
+						<input type="hidden" name="id" />
+						<div class="form-column">
+							<div class="form-input">
+								<label for="name">Name</label>
+								<input class="not-empty" type="text" name="name" />
+							</div>
+							<div class="form-input">
+								<label for="character">Character</label>
+								<input class="not-empty" type="text" name="character" list="characters" />
+								<datalist id="characters"></datalist>
+							</div>
+						</div>
+						<div class="form-column">
+							<div class="form-input">
+								<label for="text">Text</label>
+								<textarea class="not-empty" name="text"></textarea>
+							</div>
+						</div>
 					</div>
 					<div class="form-row">
-						<label for="text">Text:</label>
-						<textarea class="not-empty" name="text"></textarea>
+						<button class="button dialog-button" type="submit"><i class="fas fa-plus fa-lg"></i></button>
 					</div>
-					<div class="form-row">
-						<label for="character">Character:</label>
-						<input class="not-empty" type="text" name="character" list="characters" />
-						<datalist id="characters"></datalist>
-					</div>
-					<button class="button dialog-button" type="submit"><i class="fas fa-plus fa-lg"></i></button>
 				</form>
 			</div>
 			<div id="message-container"></div>

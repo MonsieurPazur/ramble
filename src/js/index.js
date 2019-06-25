@@ -20,8 +20,8 @@ $(() => {
     resizable: false,
     draggable: false,
 
-    width: 480,
-    height: 360,
+    width: 800,
+    height: 520,
   });
 });
 
