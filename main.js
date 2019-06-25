@@ -23,6 +23,7 @@ const template = [
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
+    backgroundColor: '#29434e',
     width: 1280,
     height: 720,
     webPreferences: {

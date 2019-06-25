@@ -57,7 +57,12 @@ html, body {
 }
 
 #main {
+	-webkit-user-select: none;
+	-webkit-app-region: drag;
+
 	height: 100%;
+
+	animation: fadeIn 0.5s;
 }
 
 #graph-container {
@@ -337,4 +342,13 @@ html, body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: darken($dark-color, 20%); 
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
