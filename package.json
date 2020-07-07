@@ -30,7 +30,7 @@
     "cytoscape-edgehandles": "^3.5.1",
     "nedb": "^1.8.0",
     "normalize.css": "^8.0.1",
-    "npm": "^6.9.0",
+    "npm": "^6.14.6",
     "typeit": "^6.0.3"
   }
 }
